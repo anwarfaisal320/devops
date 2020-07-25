@@ -1,0 +1,34 @@
+resource "aws_cloudwatch_metric_alarm" "CwAlarm" {
+   alarm_name          = "iam_policy_changes"
+   alarm_description   = "A CloudWatch Alarm that triggers when changes are made to IAM policies. Events include IAM policy creation/deletion/update operations as well as attaching/detaching policies from IAM     users, roles or groups."
+   metric_name         = "IAMPolicyEventCount"
+   namespace           = "CloudTrailMetrics"
+   statistic           = "Sum"
+   period              = "300"
+   threshold           = "1"
+   evaluation_periods  = "1"
+   comparison_operator = "GreaterThanOrEqualToThreshold"
+   alarm_actions       = ["arn:aws:sns:us-east-1:496792445795:NotifyMe"]
+  treat_missing_data  = "notBreaching"
+ }
+  
+  resource "aws_cloudwatch_log_metric_filter" "MetricFilter" {
+   log_group_name = "${aws_cloudwatch_log_group.yada.name}"
+   pattern        = "{($.eventName=DeleteGroupPolicy)||($.eventName=DeleteRolePolicy)||($.eventName=DeleteUserPolicy)||($.eventName=PutGroupPolicy)||($.eventName=PutRolePolicy)||($.eventName=PutUserPolicy)||($    .eventName=CreatePolicy)||($.eventName=DeletePolicy)||($.eventName=CreatePolicyVersion)||($.eventName=DeletePolicyVersion)||($.eventName=AttachRolePolicy)||($.eventName=DetachRolePolicy)||($.eventName=AttachU    serPolicy)||($.eventName=DetachUserPolicy)||($.eventName=AttachGroupPolicy)||($.eventName=DetachGroupPolicy)}"
+   name           = "IAMPolicyEventCount"
+ 
+   metric_transformation {
+     name      = "IAMPolicyEventCount"
+     value     = "1"
+     namespace = "CloudTrailMetrics"
+   }
+ }
+ 
+ resource "aws_cloudwatch_log_group" "yada" {
+   name = "Yada"
+  
+   tags = {
+     Environment = "production"
+      Application = "serviceA"
+    }
+ }
