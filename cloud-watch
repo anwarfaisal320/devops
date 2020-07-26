@@ -1,3 +1,6 @@
+
+# A CloudWatch Alarm that triggers when changes are made to IAM policies.
+# Events include IAM policy creation/deletion/update operations as well as attaching/detaching policies from IAM users, roles or groups.
 resource "aws_cloudwatch_metric_alarm" "CwAlarm" {
    alarm_name          = "iam_policy_changes"
    alarm_description   = "A CloudWatch Alarm that triggers when changes are made to IAM policies. Events include IAM policy creation/deletion/update operations as well as attaching/detaching policies from IAM     users, roles or groups."
